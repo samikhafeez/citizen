@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Citizen Feedback Chatbot — Demo</title>
+<style>
+  :root{--navy:#1f3a5f;--blue:#2e6ca4;--blue-light:#eaf1f8;--bg:#f6f8fb;--card:#fff;--text:#1c2733;--muted:#5b6b7b;--border:#d9e2ec;--warn:#b06a00;--radius:14px}
+  *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Tahoma,"Noto Sans Arabic",Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+  [dir="rtl"] body,[dir="rtl"]{font-family:"Noto Sans Arabic","Segoe UI",Tahoma,system-ui,sans-serif}
+  .page{max-width:640px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;background:var(--bg)}
+  .hd{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:var(--navy);color:#fff}
+  .hd h1{font-size:15px;margin:0;font-weight:600}
+  .ft{padding:12px 16px;font-size:12px;color:var(--muted);text-align:center;border-top:1px solid var(--border);background:var(--card)}
+  .content{flex:1;padding:18px 16px 24px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin:0 0 14px}
+  h2{font-size:20px;margin:4px 0 10px;color:var(--navy)}p.lead{color:var(--muted);margin:0 0 14px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:600;cursor:pointer;padding:13px 18px;border-radius:12px;border:1px solid transparent;width:100%;min-height:48px}
+  .btn-primary{background:var(--blue);color:#fff}.btn-secondary{background:#fff;color:var(--navy);border:1px solid var(--border)}
+  .btn-ghost{background:transparent;color:var(--muted);border:0;width:auto}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .lang-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+  .lang-btn{padding:22px 14px;font-size:20px;font-weight:700;border:2px solid var(--border);border-radius:var(--radius);background:#fff;color:var(--navy);cursor:pointer}
+  .lang-btn.sel{border-color:var(--blue);background:var(--blue-light)}
+  .chat{display:flex;flex-direction:column;gap:10px;max-height:50vh;overflow-y:auto;padding-bottom:6px}
+  .bubble{max-width:86%;padding:12px 14px;border-radius:16px;font-size:16px;white-space:pre-wrap;word-wrap:break-word}
+  .bubble.bot{background:#fff;border:1px solid var(--border);align-self:flex-start;border-bottom-left-radius:4px}
+  .bubble.user{background:var(--blue);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+  [dir="rtl"] .bubble.bot{border-bottom-left-radius:16px;border-bottom-right-radius:4px}
+  [dir="rtl"] .bubble.user{border-bottom-right-radius:16px;border-bottom-left-radius:4px}
+  .bubble.system{background:var(--blue-light);border:1px dashed var(--blue);color:var(--navy);align-self:stretch;max-width:100%;font-size:14px}
+  .answers{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+  .opt{text-align:start;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:#fff;cursor:pointer;font-size:15px;color:var(--text)}
+  .opt:hover{border-color:var(--blue);background:var(--blue-light)}.opt.sel{border-color:var(--blue);background:var(--blue-light);font-weight:600}
+  .scale{display:flex;gap:8px}.scale .opt{flex:1;text-align:center}
+  textarea.free{width:100%;min-height:84px;padding:12px;border:1px solid var(--border);border-radius:12px;font:inherit;resize:vertical}
+  .controls{display:flex;gap:8px;justify-content:space-between;margin-top:12px;flex-wrap:wrap}.controls .g{display:flex;gap:8px}
+  .progress{height:8px;background:var(--border);border-radius:999px;overflow:hidden;margin:4px 0 14px}.progress>span{display:block;height:100%;background:var(--blue);transition:width .3s}
+  .lbl{font-size:12px;color:var(--muted);margin-bottom:6px}.small{font-size:12px;color:var(--muted)}
+  .demo-tag{position:fixed;bottom:8px;inset-inline-end:8px;background:#111;color:#fff;font-size:11px;padding:4px 8px;border-radius:6px;opacity:.7}
+  .ctrl-btn{padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:#fff;color:var(--navy);font-weight:600;cursor:pointer}
+  .ctrl-btn.ghost{border-color:transparent;background:transparent;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="page" id="page">
+  <div class="hd"><h1 id="hd-title">Citizen Feedback</h1><button class="btn-ghost" id="info-btn">ⓘ <span id="info-label">How your answers are used</span></button></div>
+  <div class="content" id="content"></div>
+  <div class="ft" id="footer"></div>
+</div>
+<div class="demo-tag">DEMO · saves to this browser only</div>
+
+<script>
+/* ====== Approved UI strings (indicative Arabic — needs native + ethics review) ====== */
+const T = {
+  en:{app_title:"Citizen Feedback",welcome:"Welcome",intro:"This is a short, anonymous survey about digital technology in water management in Jordan. Your answers help research. This chatbot only collects your answers — it does not give advice or help.",anonymous:"Your answers are anonymous. We do not ask for your name, phone number or address.",choose_language:"Please choose your language",continue:"Continue",back:"Back",skip:"Skip",stop:"Stop",next:"Next",done:"Done",data_use_link:"How your answers are used",data_use_title:"How your answers are used",data_use_body:"We collect your answers about digital water tools, plus a few general details like age group and area. We do not collect your name, phone number, exact address or location. Your answers are stored securely and seen only by the research team. You can skip any question or stop at any time. You can ask us to delete your responses.",consent_title:"Before we begin",consent_body:"Taking part is voluntary. The survey is anonymous. You can skip any question, go back one step, or stop at any time. Your answers are stored securely and used only for research. This chatbot does not give advice, referrals or support.",agree:"I agree and want to continue",decline:"No, thank you",consent_required:"We can only continue if you agree. You are free to leave at any time.",progress:"Question {n} of {total}",redirect_offtopic:"Thanks. For this question, could you tell us about your experience with the water service or its digital tools? You can also skip this question.",redirect_unclear:"Sorry, I didn't quite catch that. Could you say it in a different way? You can also skip this question.",ack_sensitive:"Thank you for sharing. You can skip this question or stop at any time — whatever feels right for you. This survey can't offer help or advice.",optional_hint:"This question is optional. You can type an answer or skip it.",type_here:"Type your answer…",choose_any:"Choose any that apply",complete_title:"Thank you",complete_body:"Your answers have been submitted. Thank you for helping with this research.",withdraw:"If you would like your answers removed, you can contact the research team.",stopped_title:"You have stopped the survey",stopped_body:"That's completely fine. Any answers you gave so far have been saved anonymously. Thank you for your time.",resume:"Resume survey",restart:"Start again",footer:"This chatbot collects answers only. It does not give advice or support.",start:"Start"},
+  ar:{app_title:"آراء المواطنين",welcome:"مرحبًا",intro:"هذا استبيان قصير ومجهول الهوية حول استخدام التكنولوجيا الرقمية في إدارة المياه في الأردن. إجاباتك تساعد في البحث. هذا الروبوت يجمع إجاباتك فقط — وهو لا يقدّم نصائح أو مساعدة.",anonymous:"إجاباتك مجهولة الهوية. لا نطلب اسمك أو رقم هاتفك أو عنوانك.",choose_language:"الرجاء اختيار اللغة",continue:"متابعة",back:"رجوع",skip:"تخطّي",stop:"إيقاف",next:"التالي",done:"تم",data_use_link:"كيف تُستخدم إجاباتك",data_use_title:"كيف تُستخدم إجاباتك",data_use_body:"نجمع إجاباتك حول أدوات المياه الرقمية، إضافةً إلى بعض المعلومات العامة مثل الفئة العمرية والمنطقة. لا نجمع اسمك أو رقم هاتفك أو عنوانك الدقيق أو موقعك. تُخزَّن إجاباتك بشكل آمن ولا يطّلع عليها سوى فريق البحث. يمكنك تخطّي أي سؤال أو التوقف في أي وقت. ويمكنك أن تطلب منّا حذف إجاباتك.",consent_title:"قبل أن نبدأ",consent_body:"المشاركة طوعية. الاستبيان مجهول الهوية. يمكنك تخطّي أي سؤال أو الرجوع خطوة واحدة أو التوقف في أي وقت. تُخزَّن إجاباتك بشكل آمن وتُستخدم لأغراض البحث فقط. هذا الروبوت لا يقدّم نصائح أو إحالات أو دعمًا.",agree:"أوافق وأريد المتابعة",decline:"لا، شكرًا",consent_required:"يمكننا المتابعة فقط في حال موافقتك. أنت حر في المغادرة في أي وقت.",progress:"السؤال {n} من {total}",redirect_offtopic:"شكرًا لك. بالنسبة لهذا السؤال، هل يمكنك إخبارنا عن تجربتك مع خدمة المياه أو أدواتها الرقمية؟ يمكنك أيضًا تخطّي هذا السؤال.",redirect_unclear:"عذرًا، لم أفهم ذلك تمامًا. هل يمكنك صياغته بطريقة أخرى؟ يمكنك أيضًا تخطّي هذا السؤال.",ack_sensitive:"شكرًا لمشاركتك. يمكنك تخطّي هذا السؤال أو التوقف في أي وقت — كما تراه مناسبًا لك. لا يستطيع هذا الاستبيان تقديم مساعدة أو نصيحة.",optional_hint:"هذا السؤال اختياري. يمكنك كتابة إجابة أو تخطّيه.",type_here:"اكتب إجابتك…",choose_any:"اختر كل ما ينطبق",complete_title:"شكرًا لك",complete_body:"تم إرسال إجاباتك. شكرًا لمساعدتك في هذا البحث.",withdraw:"إذا رغبت في إزالة إجاباتك، يمكنك التواصل مع فريق البحث.",stopped_title:"لقد أوقفت الاستبيان",stopped_body:"لا بأس بذلك إطلاقًا. أي إجابات قدّمتها حتى الآن حُفظت بشكل مجهول الهوية. شكرًا لوقتك.",resume:"استئناف الاستبيان",restart:"البدء من جديد",footer:"هذا الروبوت يجمع الإجابات فقط، ولا يقدّم نصائح أو دعمًا.",start:"ابدأ"}
+};
+
+/* ====== Survey content (mirrors lib/survey-data.ts) ====== */
+const Q = [
+  {id:"age_band",type:"single",prompt:{en:"Which age group are you in?",ar:"ما هي فئتك العمرية؟"},options:[["u18","Under 18","أقل من 18"],["18_24","18–24","18–24"],["25_34","25–34","25–34"],["35_44","35–44","35–44"],["45_59","45–59","45–59"],["60p","60 or older","60 أو أكثر"],["na","Prefer not to say","أفضّل عدم الإجابة"]]},
+  {id:"gender",type:"single",prompt:{en:"How do you describe your gender?",ar:"كيف تصف نوعك الاجتماعي؟"},options:[["female","Female","أنثى"],["male","Male","ذكر"],["other","Other","آخر"],["na","Prefer not to say","أفضّل عدم الإجابة"]]},
+  {id:"area",type:"single",prompt:{en:"Which area do you live in?",ar:"في أي منطقة تعيش؟"},options:[["amman","Amman","عمّان"],["irbid","Irbid","إربد"],["mafraq","Mafraq","المفرق"],["zarqa","Zarqa","الزرقاء"],["camp","A refugee camp","مخيم لاجئين"],["other","Other","أخرى"],["na","Prefer not to say","أفضّل عدم الإجابة"]]},
+  {id:"acc_tools",type:"multiple",prompt:{en:"Which digital tools do you use to get water information or report water problems? (Choose any.)",ar:"ما الأدوات الرقمية التي تستخدمها للحصول على معلومات المياه أو للإبلاغ عن مشاكلها؟ (اختر ما ينطبق.)"},options:[["app","A mobile app","تطبيق على الهاتف"],["whatsapp","WhatsApp","واتساب"],["sms","SMS / text message","رسالة نصية"],["website","A website","موقع إلكتروني"],["call","Phone call","مكالمة هاتفية"],["none","I don't use any","لا أستخدم أيًا منها"],["other","Other","أخرى"]]},
+  {id:"acc_ease",type:"scale",prompt:{en:"How easy is it for you to access these digital water tools?",ar:"ما مدى سهولة وصولك إلى هذه الأدوات الرقمية للمياه؟"},low:{en:"Very hard",ar:"صعب جدًا"},high:{en:"Very easy",ar:"سهل جدًا"}},
+  {id:"acc_comment",type:"freetext",prompt:{en:"Anything you want to add about getting access to these tools? (Optional)",ar:"هل تريد إضافة أي شيء عن الوصول إلى هذه الأدوات؟ (اختياري)"}},
+  {id:"trust_comfort",type:"scale",prompt:{en:"How comfortable are you sharing information about water issues digitally?",ar:"ما مدى ارتياحك لمشاركة معلومات عن مشاكل المياه بشكل رقمي؟"},low:{en:"Not at all",ar:"غير مرتاح إطلاقًا"},high:{en:"Very comfortable",ar:"مرتاح جدًا"}},
+  {id:"trust_handled",type:"single",prompt:{en:"Do you trust that your reports are handled responsibly?",ar:"هل تثق بأن بلاغاتك يتم التعامل معها بمسؤولية؟"},options:[["yes","Yes","نعم"],["unsure","Not sure","غير متأكد"],["no","No","لا"]]},
+  {id:"trust_comment",type:"freetext",prompt:{en:"What would make you trust these digital tools more? (Optional)",ar:"ما الذي قد يزيد من ثقتك بهذه الأدوات الرقمية؟ (اختياري)"}},
+  {id:"rel_improve",type:"single",prompt:{en:"Could digital tools improve water management for you?",ar:"هل يمكن للأدوات الرقمية أن تحسّن إدارة المياه بالنسبة لك؟"},options:[["yes","Yes","نعم"],["somewhat","Somewhat","إلى حدٍ ما"],["no","No","لا"],["unsure","Not sure","غير متأكد"]]},
+  {id:"rel_which",type:"multiple",showIf:{q:"rel_improve",in:["yes","somewhat"]},prompt:{en:"Which of these would help you most? (Choose any.)",ar:"أي من هذه سيساعدك أكثر؟ (اختر ما ينطبق.)"},options:[["faster_report","Faster way to report problems","طريقة أسرع للإبلاغ عن المشاكل"],["outage_alerts","Alerts about water cut-offs","تنبيهات عن انقطاع المياه"],["billing","Clear billing information","معلومات واضحة عن الفواتير"],["quality","Water quality information","معلومات عن جودة المياه"],["contact","Easier contact with the provider","تواصل أسهل مع مزوّد الخدمة"],["other","Other","أخرى"]]},
+  {id:"rel_comment",type:"freetext",prompt:{en:"How could technology improve water management for you? (Optional)",ar:"كيف يمكن للتكنولوجيا أن تحسّن إدارة المياه بالنسبة لك؟ (اختياري)"}},
+  {id:"chal_what",type:"multiple",prompt:{en:"What makes digital water tools hard to use? (Choose any.)",ar:"ما الذي يجعل الأدوات الرقمية للمياه صعبة الاستخدام؟ (اختر ما ينطبق.)"},options:[["internet","Internet cost or coverage","تكلفة الإنترنت أو ضعف التغطية"],["language","Language","اللغة"],["reading","Reading or writing difficulty","صعوبة القراءة أو الكتابة"],["device","No suitable phone or device","عدم توفر هاتف أو جهاز مناسب"],["trust","Not trusting them","عدم الثقة بها"],["complex","The tools are too complicated","الأدوات معقّدة جدًا"],["none","No difficulties","لا توجد صعوبات"],["other","Other","أخرى"]]},
+  {id:"chal_comment",type:"freetext",prompt:{en:"Tell us about a difficulty you have faced. (Optional)",ar:"أخبرنا عن صعوبة واجهتها. (اختياري)"}},
+  {id:"imp_result",type:"single",prompt:{en:"When you reported a water issue digitally, did it lead to any improvement?",ar:"عندما أبلغت عن مشكلة مياه بشكل رقمي، هل أدى ذلك إلى أي تحسّن؟"},options:[["yes","Yes, it improved","نعم، تحسّن الوضع"],["partly","Partly","جزئيًا"],["no","No change","لا تغيير"],["never","I have never reported","لم أبلّغ من قبل"]]},
+  {id:"imp_satisfaction",type:"scale",showIf:{q:"imp_result",in:["yes","partly","no"]},prompt:{en:"How satisfied were you with the response you received?",ar:"ما مدى رضاك عن الاستجابة التي تلقيتها؟"},low:{en:"Not satisfied",ar:"غير راضٍ"},high:{en:"Very satisfied",ar:"راضٍ جدًا"}},
+  {id:"imp_comment",type:"freetext",prompt:{en:"Anything else about whether reporting water issues leads to change? (Optional)",ar:"أي شيء آخر حول ما إذا كان الإبلاغ عن مشاكل المياه يؤدي إلى تغيير؟ (اختياري)"}}
+];
+
+/* ====== Local relevance check (mirrors lib/relevance.ts) ====== */
+const WATER=["water","tap","faucet","pipe","leak","bill","billing","app","report","supply","tank","quality","outage","cut","pressure","drink","shortage","meter","provider","tanker","well","pump","sewage","clean","dirty","salty","smell","service","alert","sms","whatsapp","ماء","مياه","صنبور","حنفية","أنبوب","انبوب","تسرب","تسريب","فاتورة","فواتير","تطبيق","إبلاغ","ابلاغ","تبليغ","بلاغ","خزان","جودة","انقطاع","ضغط","شرب","نقص","عداد","مزود","صهريج","تنكر","بئر","مضخة","صرف","نظيف","مالح","رائحة","خدمة","تنبيه"];
+const DISTRESS=["suicide","kill myself","want to die","hurt myself","abuse","abused","violence","beaten","threat","danger","unsafe","die","starving","no food","انتحار","اقتل نفسي","أقتل نفسي","اريد ان اموت","أريد أن أموت","عنف","ضرب","تهديد","خطر","اموت","أموت","لا يوجد طعام"];
+function norm(s){return (s||"").toLowerCase().replace(/[ً-ْ]/g,"").replace(/[آأإ]/g,"ا").trim()}
+function has(t,arr){const x=norm(t);return arr.some(w=>x.includes(norm(w)))}
+function relevance(text){const t=(text||"").trim();if(!t)return"unclear";if(has(t,DISTRESS))return"sensitive";const w=t.split(/\s+/).filter(Boolean).length;if(has(t,WATER))return w<=2?"partially_relevant":"relevant";return w<=2?"unclear":"off_topic"}
+
+/* ====== State ====== */
+const LS="cfc_demo";
+let st = load() || {lang:"en",screen:"landing",consent:false,answers:[]};
+const redirected = new Set();
+
+function load(){try{return JSON.parse(localStorage.getItem(LS))}catch(e){return null}}
+function save(){localStorage.setItem(LS,JSON.stringify(st))}
+function tr(k){return (T[st.lang][k]||k)}
+function setDir(){document.documentElement.lang=st.lang;document.documentElement.dir=st.lang==="ar"?"rtl":"ltr"}
+
+function visible(){return Q.filter(q=>!q.showIf || (st.answers.find(a=>a.q===q.showIf.q)||{}).value && [].concat((st.answers.find(a=>a.q===q.showIf.q)||{}).value).some(v=>q.showIf.in.includes(v)))}
+function nextQ(){const ans=new Set(st.answers.map(a=>a.q));for(const q of Q){if(q.showIf){const a=st.answers.find(x=>x.q===q.showIf.q);const vals=a&&a.value?[].concat(a.value):[];if(!vals.some(v=>q.showIf.in.includes(v)))continue}if(!ans.has(q.id))return q}return null}
+function labelOf(q,a){if(a.skipped)return"—";if(a.text)return a.text;if(a.value==null)return"—";const vals=[].concat(a.value);if(q.type==="scale")return vals.join(", ");return vals.map(v=>{const o=(q.options||[]).find(o=>o[0]===v);return o?o[st.lang==="ar"?2:1]:v}).join("، ")}
+
+/* ====== Rendering ====== */
+const content=document.getElementById("content");
+function render(){
+  setDir(); save();
+  document.getElementById("hd-title").textContent=tr("app_title");
+  document.getElementById("info-label").textContent=tr("data_use_link");
+  document.getElementById("footer").textContent=tr("footer");
+  if(st.screen==="landing")return renderLanding();
+  if(st.screen==="consent")return renderConsent();
+  if(st.screen==="survey")return renderSurvey();
+  if(st.screen==="complete")return renderComplete(false);
+  if(st.screen==="stopped")return renderComplete(true);
+}
+function el(html){const d=document.createElement("div");d.innerHTML=html.trim();return d.firstChild}
+
+function renderLanding(){
+  content.innerHTML="";
+  content.appendChild(el(`<div class="card"><h2>${tr("welcome")}</h2><p class="lead">${tr("intro")}</p><p class="small">🔒 ${tr("anonymous")}</p></div>`));
+  const c=el(`<div class="card"><p class="lead">${tr("choose_language")}</p><div class="lang-grid"><button class="lang-btn ${st.lang==="en"?"sel":""}" id="en">English</button><button class="lang-btn ${st.lang==="ar"?"sel":""}" id="ar">العربية</button></div><div style="margin-top:16px"><button class="btn btn-primary" id="go">${tr("continue")}</button></div></div>`);
+  content.appendChild(c);
+  c.querySelector("#en").onclick=()=>{st.lang="en";render()};
+  c.querySelector("#ar").onclick=()=>{st.lang="ar";render()};
+  c.querySelector("#go").onclick=()=>{st.screen="consent";render()};
+}
+function renderConsent(){
+  content.innerHTML="";
+  const c=el(`<div class="card"><h2>${tr("consent_title")}</h2><p class="lead">${tr("consent_body")}</p><div style="display:flex;flex-direction:column;gap:10px"><button class="btn btn-primary" id="agree">${tr("agree")}</button><button class="btn btn-secondary" id="decline">${tr("decline")}</button></div></div>`);
+  content.appendChild(c);
+  c.querySelector("#agree").onclick=()=>{st.consent=true;st.consentAt=new Date().toISOString();st.answers=[];st.screen="survey";render()};
+  c.querySelector("#decline").onclick=()=>{content.innerHTML="";content.appendChild(el(`<div class="card"><p class="lead">${tr("consent_required")}</p><button class="btn btn-secondary" id="b">${tr("back")}</button></div>`));content.querySelector("#b").onclick=()=>{st.screen="landing";render()}};
+}
+function renderComplete(stopped){
+  content.innerHTML="";
+  const c=el(`<div class="card" style="text-align:center"><div style="font-size:44px;margin-bottom:6px">${stopped?"🟦":"✅"}</div><h2>${tr(stopped?"stopped_title":"complete_title")}</h2><p class="lead">${tr(stopped?"stopped_body":"complete_body")}</p>${stopped?"":`<p class="small">${tr("withdraw")}</p>`}<div style="margin-top:14px;display:flex;flex-direction:column;gap:10px">${stopped?`<button class="btn btn-primary" id="resume">${tr("resume")}</button>`:""}<button class="btn btn-secondary" id="restart">${tr("restart")}</button></div></div>`);
+  content.appendChild(c);
+  if(stopped)c.querySelector("#resume").onclick=()=>{st.screen="survey";render()};
+  c.querySelector("#restart").onclick=()=>{st={lang:st.lang,screen:"landing",consent:false,answers:[]};redirected.clear();render()};
+}
+
+let multiSel=[];
+function renderSurvey(){
+  const cur=nextQ();
+  if(st.answers.length>0 && !cur){st.screen="complete";return render()}
+  content.innerHTML="";
+  const vis=visible();const answered=vis.filter(q=>st.answers.find(a=>a.q===q.id)).length;
+  const pct=vis.length?Math.round(answered/vis.length*100):0;const idx=Math.min(answered+1,vis.length);
+  const prog=document.createElement("div");
+  prog.innerHTML=`<div class="lbl">${tr("progress").replace("{n}",idx).replace("{total}",vis.length)}</div><div class="progress"><span style="width:${pct}%"></span></div>`;
+  content.appendChild(prog);
+  // transcript
+  const chat=document.createElement("div");chat.className="chat";
+  for(const q of Q){const a=st.answers.find(x=>x.q===q.id);if(!a)continue;chat.appendChild(el(`<div class="bubble bot">${q.prompt[st.lang]}</div>`));chat.appendChild(el(`<div class="bubble user">${escapeHtml(labelOf(q,a))}</div>`))}
+  if(cur)chat.appendChild(el(`<div class="bubble bot">${cur.prompt[st.lang]}</div>`));
+  if(st._note)chat.appendChild(el(`<div class="bubble system">${st._note}</div>`));
+  content.appendChild(chat);chat.scrollTop=chat.scrollHeight;
+
+  if(!cur)return;
+  const box=document.createElement("div");box.className="answers";content.appendChild(box);
+  multiSel=[];
+  if(cur.type==="single"){cur.options.forEach(o=>{const b=el(`<button class="opt">${o[st.lang==="ar"?2:1]}</button>`);b.onclick=()=>answer(cur,o[0]);box.appendChild(b)})}
+  else if(cur.type==="multiple"){box.appendChild(el(`<div class="small">${tr("choose_any")}</div>`));cur.options.forEach(o=>{const b=el(`<button class="opt">☐ ${o[st.lang==="ar"?2:1]}</button>`);b.onclick=()=>{const i=multiSel.indexOf(o[0]);if(i>=0){multiSel.splice(i,1);b.classList.remove("sel");b.textContent="☐ "+o[st.lang==="ar"?2:1]}else{multiSel.push(o[0]);b.classList.add("sel");b.textContent="☑ "+o[st.lang==="ar"?2:1]}done.disabled=multiSel.length===0};box.appendChild(b)});var done=el(`<button class="btn btn-primary" style="margin-top:8px" disabled>${tr("done")}</button>`);done.onclick=()=>answer(cur,multiSel.slice());box.appendChild(done)}
+  else if(cur.type==="scale"){const row=el(`<div class="scale"></div>`);[1,2,3,4,5].forEach(n=>{const b=el(`<button class="opt">${n}</button>`);b.onclick=()=>answer(cur,String(n));row.appendChild(b)});box.appendChild(row);box.appendChild(el(`<div class="controls" style="margin-top:4px"><span class="small">${cur.low[st.lang]}</span><span class="small">${cur.high[st.lang]}</span></div>`))}
+  else{box.appendChild(el(`<div class="small">${tr("optional_hint")}</div>`));const ta=el(`<textarea class="free" placeholder="${tr("type_here")}"></textarea>`);box.appendChild(ta);const nx=el(`<button class="btn btn-primary" style="margin-top:8px">${tr("next")}</button>`);nx.onclick=()=>submitFree(cur,ta.value);box.appendChild(nx)}
+
+  const ctr=el(`<div class="controls"><div class="g"><button class="ctrl-btn" id="back">← ${tr("back")}</button></div><div class="g"><button class="ctrl-btn" id="skip">${tr("skip")}</button><button class="ctrl-btn ghost" id="stop">${tr("stop")}</button></div></div>`);
+  content.appendChild(ctr);
+  ctr.querySelector("#back").disabled=st.answers.length===0;
+  ctr.querySelector("#back").onclick=()=>{const aq=Q.filter(q=>st.answers.find(a=>a.q===q.id));const last=aq[aq.length-1];if(!last)return;st.answers=st.answers.filter(a=>a.q!==last.id);redirected.delete(last.id);st._note="";render()};
+  ctr.querySelector("#skip").onclick=()=>{st._note="";commit(cur,{skipped:true});render()};
+  ctr.querySelector("#stop").onclick=()=>{st.screen="stopped";render()};
+}
+
+function commit(q,obj){st.answers=st.answers.filter(a=>a.q!==q.id);st.answers.push(Object.assign({q:q.id,lang:st.lang,at:new Date().toISOString()},obj))}
+function answer(q,value){st._note="";commit(q,{value:value});render()}
+function submitFree(q,text){const t=(text||"").trim();if(!t){st._note="";return (function(){commit(q,{skipped:true});render()})()}
+  const label=relevance(t);
+  if(label==="sensitive"){st._note=tr("ack_sensitive");return render()}
+  if((label==="off_topic"||label==="unclear")&&!redirected.has(q.id)){redirected.add(q.id);st._note=label==="off_topic"?tr("redirect_offtopic"):tr("redirect_unclear");return render()}
+  st._note="";commit(q,{text:t,relevance:label});render()
+}
+function escapeHtml(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+document.getElementById("info-btn").onclick=()=>{alert(tr("data_use_title")+"\n\n"+tr("data_use_body"))};
+render();
+</script>
+</body>
+</html>

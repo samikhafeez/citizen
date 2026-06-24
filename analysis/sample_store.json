@@ -1,0 +1,42 @@
+{
+  "sessions": {
+    "11111111-aaaa-bbbb-cccc-000000000001": {
+      "id": "11111111-aaaa-bbbb-cccc-000000000001",
+      "language": "en",
+      "status": "completed",
+      "answers": [
+        { "questionId": "acc_comment", "freeText": "The water app is slow and often crashes when the internet is weak.", "language": "en", "theme": "accessibility", "relevance": "relevant" },
+        { "questionId": "chal_comment", "freeText": "It is hard to use because the app is only in formal Arabic and the data costs money.", "language": "en", "theme": "challenges", "relevance": "relevant" },
+        { "questionId": "imp_comment", "freeText": "I reported a leak twice through WhatsApp but nothing changed for weeks.", "language": "en", "theme": "impact", "relevance": "relevant" }
+      ]
+    },
+    "22222222-aaaa-bbbb-cccc-000000000002": {
+      "id": "22222222-aaaa-bbbb-cccc-000000000002",
+      "language": "ar",
+      "status": "completed",
+      "answers": [
+        { "questionId": "trust_comment", "freeText": "لا أثق كثيرًا لأنني لا أعرف من يرى بياناتي عندما أبلّغ عن مشكلة المياه.", "language": "ar", "theme": "trust", "relevance": "relevant" },
+        { "questionId": "rel_comment", "freeText": "التنبيهات عن انقطاع المياه ومعلومات الفاتورة ستساعدني كثيرًا.", "language": "ar", "theme": "relevance", "relevance": "relevant" },
+        { "questionId": "chal_comment", "freeText": "التطبيق معقّد والإنترنت ضعيف في منطقتي.", "language": "ar", "theme": "challenges", "relevance": "relevant" }
+      ]
+    },
+    "33333333-aaaa-bbbb-cccc-000000000003": {
+      "id": "33333333-aaaa-bbbb-cccc-000000000003",
+      "language": "en",
+      "status": "completed",
+      "answers": [
+        { "questionId": "rel_comment", "freeText": "A faster way to report problems and to see water quality would really help.", "language": "en", "theme": "relevance", "relevance": "relevant" },
+        { "questionId": "imp_comment", "freeText": "Reporting through the website worked once and the tanker came the next day.", "language": "en", "theme": "impact", "relevance": "relevant" }
+      ]
+    },
+    "44444444-aaaa-bbbb-cccc-000000000004": {
+      "id": "44444444-aaaa-bbbb-cccc-000000000004",
+      "language": "ar",
+      "status": "completed",
+      "answers": [
+        { "questionId": "acc_comment", "freeText": "أستخدم واتساب للتبليغ لكن أحيانًا لا يصل الرد.", "language": "ar", "theme": "accessibility", "relevance": "relevant" },
+        { "questionId": "chal_comment", "freeText": "صعوبة القراءة والكتابة تجعل استخدام التطبيق صعبًا على والدتي.", "language": "ar", "theme": "challenges", "relevance": "relevant" }
+      ]
+    }
+  }
+}

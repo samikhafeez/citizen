@@ -1,0 +1,92 @@
+[
+  {
+    "response_ref": "11111111:acc_comment",
+    "question_id": "acc_comment",
+    "theme": "accessibility",
+    "language": "en",
+    "text": "The water app is slow and often crashes when the internet is weak.",
+    "response_id": null,
+    "created_at": null
+  },
+  {
+    "response_ref": "11111111:chal_comment",
+    "question_id": "chal_comment",
+    "theme": "challenges",
+    "language": "en",
+    "text": "It is hard to use because the app is only in formal Arabic and the data costs money.",
+    "response_id": null,
+    "created_at": null
+  },
+  {
+    "response_ref": "11111111:imp_comment",
+    "question_id": "imp_comment",
+    "theme": "impact",
+    "language": "en",
+    "text": "I reported a leak twice through WhatsApp but nothing changed for weeks.",
+    "response_id": null,
+    "created_at": null
+  },
+  {
+    "response_ref": "22222222:trust_comment",
+    "question_id": "trust_comment",
+    "theme": "trust",
+    "language": "ar",
+    "text": "لا أثق كثيرًا لأنني لا أعرف من يرى بياناتي عندما أبلّغ عن مشكلة المياه.",
+    "response_id": null,
+    "created_at": null
+  },
+  {
+    "response_ref": "22222222:rel_comment",
+    "question_id": "rel_comment",
+    "theme": "relevance",
+    "language": "ar",
+    "text": "التنبيهات عن انقطاع المياه ومعلومات الفاتورة ستساعدني كثيرًا.",
+    "response_id": null,
+    "created_at": null
+  },
+  {
+    "response_ref": "22222222:chal_comment",
+    "question_id": "chal_comment",
+    "theme": "challenges",
+    "language": "ar",
+    "text": "التطبيق معقّد والإنترنت ضعيف في منطقتي.",
+    "response_id": null,
+    "created_at": null
+  },
+  {
+    "response_ref": "33333333:rel_comment",
+    "question_id": "rel_comment",
+    "theme": "relevance",
+    "language": "en",
+    "text": "A faster way to report problems and to see water quality would really help.",
+    "response_id": null,
+    "created_at": null
+  },
+  {
+    "response_ref": "33333333:imp_comment",
+    "question_id": "imp_comment",
+    "theme": "impact",
+    "language": "en",
+    "text": "Reporting through the website worked once and the tanker came the next day.",
+    "response_id": null,
+    "created_at": null
+  },
+  {
+    "response_ref": "44444444:acc_comment",
+    "question_id": "acc_comment",
+    "theme": "accessibility",
+    "language": "ar",
+    "text": "أستخدم واتساب للتبليغ لكن أحيانًا لا يصل الرد.",
+    "response_id": null,
+    "created_at": null
+  },
+  {
+    "response_ref": "44444444:chal_comment",
+    "question_id": "chal_comment",
+    "theme": "challenges",
+    "language": "ar",
+    "text": "صعوبة القراءة [per] استخدام التطبيق [loc] على والدتي.",
+    "response_id": null,
+    "created_at": null
+  }
+]

@@ -1,0 +1,28 @@
+{
+  "name": "citizen-feedback-chatbot",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Citizen Feedback Chatbot for Refugees in Jordan — bilingual (AR/EN) survey instrument on digital technology in water management. Phase 1 prototype.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "seed": "tsx scripts/seed.ts",
+    "eval:assistant": "tsx scripts/eval-assistant.ts",
+    "eval:survey": "tsx scripts/eval-survey.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.45.4",
+    "next": "14.2.5",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "20.14.10",
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
+    "tsx": "4.16.2",
+    "typescript": "5.5.3"
+  }
+}

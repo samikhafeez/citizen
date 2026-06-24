@@ -1,0 +1,11 @@
+# Phase 2 RAG analysis (researchers only). Local-first, runs on CPU.
+
+numpy>=1.26                    # required (vectors + retrieval; offline fallback works with this alone)
+
+# Recommended for real analysis (better multilingual embeddings):
+sentence-transformers>=3.0.0  # local model: intfloat/multilingual-e5-small (AR+EN)
+
+# Optional, depending on backend / store choice:
+# supabase>=2.4.0             # read responses directly from Supabase
+spacy>=3.7                  # stronger PII scrubbing via NER (xx_ent_wiki_sm)
+# openai>=1.30               # ONLY if an approved external model is permitted
